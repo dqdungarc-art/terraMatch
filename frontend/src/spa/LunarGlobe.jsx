@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Compass, MapPin, Minus, Plus, RotateCcw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { MapPin, Minus, Plus, RotateCcw } from "lucide-react";
 import "./LunarGlobe.css";
 
 const VERTEX_SHADER = `
@@ -19,7 +19,7 @@ vec3 rotateY(vec3 p, float a) {
   return vec3(c * p.x + s * p.z, p.y, -s * p.x + c * p.z);
 }
 void main() {
-  vec3 p = rotateY(rotateX(aPosition, uRotation.x), uRotation.y);
+  vec3 p = rotateX(rotateY(aPosition, uRotation.y), uRotation.x);
   vNormal = p;
   vUv = aUv;
   float viewZ = 3.2 - p.z;
@@ -98,19 +98,18 @@ function createSphere(latitudes = 64, longitudes = 96) {
   return { positions: new Float32Array(positions), uvs: new Float32Array(uvs), indices: new Uint16Array(indices) };
 }
 
-export default function LunarGlobe({ sites = [] }) {
+export default function LunarGlobe({ sites = [], selectedSiteId, onSelect, showMarkers = true }) {
   const canvasRef = useRef(null);
   const stageRef = useRef(null);
   const markerRefs = useRef({});
   const sitesRef = useRef(sites);
+  const showMarkersRef = useRef(showMarkers);
   sitesRef.current = sites;
+  showMarkersRef.current = showMarkers;
   const viewRef = useRef({ pitch: -0.32, yaw: 0.42, zoom: 1.15 });
   const dragRef = useRef(null);
-  const [selectedId, setSelectedId] = useState("shackleton-rim");
   const [zoom, setZoom] = useState(1.15);
   const [error, setError] = useState("");
-
-  const selectedSite = useMemo(() => sites.find((site) => site.site_id === selectedId) ?? sites[0], [sites, selectedId]);
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -220,13 +219,13 @@ export default function LunarGlobe({ sites = [] }) {
           const latitude = (Number(site.latitude) * Math.PI) / 180;
           const longitude = (Number(site.longitude) * Math.PI) / 180;
           const source = [Math.cos(latitude) * Math.sin(longitude), Math.sin(latitude), Math.cos(latitude) * Math.cos(longitude)];
-          const pitchCos = Math.cos(view.pitch);
-          const pitchSin = Math.sin(view.pitch);
-          const pitched = [source[0], pitchCos * source[1] - pitchSin * source[2], pitchSin * source[1] + pitchCos * source[2]];
           const yawCos = Math.cos(view.yaw);
           const yawSin = Math.sin(view.yaw);
-          const point = [yawCos * pitched[0] + yawSin * pitched[2], pitched[1], -yawSin * pitched[0] + yawCos * pitched[2]];
-          const visible = point[2] > 0.035;
+          const yawed = [yawCos * source[0] + yawSin * source[2], source[1], -yawSin * source[0] + yawCos * source[2]];
+          const pitchCos = Math.cos(view.pitch);
+          const pitchSin = Math.sin(view.pitch);
+          const point = [yawed[0], pitchCos * yawed[1] - pitchSin * yawed[2], pitchSin * yawed[1] + pitchCos * yawed[2]];
+          const visible = showMarkersRef.current && point[2] > 0.035;
           marker.setAttribute("aria-hidden", visible ? "false" : "true");
           marker.tabIndex = visible ? 0 : -1;
           marker.style.visibility = visible ? "visible" : "hidden";
@@ -235,8 +234,12 @@ export default function LunarGlobe({ sites = [] }) {
           const perspective = 3.2 - point[2];
           const normalizedX = (point[0] * view.zoom / (width / height)) / perspective;
           const normalizedY = (point[1] * view.zoom) / perspective;
-          marker.style.left = `${(normalizedX + 1) * 50}%`;
-          marker.style.top = `${(1 - normalizedY) * 50}%`;
+          const canvasBounds = canvas.getBoundingClientRect();
+          const layerBounds = marker.parentElement.getBoundingClientRect();
+          const screenX = canvasBounds.left + ((normalizedX + 1) * 0.5 * canvasBounds.width) - layerBounds.left;
+          const screenY = canvasBounds.top + ((1 - normalizedY) * 0.5 * canvasBounds.height) - layerBounds.top;
+          marker.style.left = `${screenX}px`;
+          marker.style.top = `${screenY}px`;
           marker.style.opacity = `${Math.min(1, Math.max(0.35, point[2] * 2.8))}`;
           marker.style.zIndex = String(5 + index + Math.round(point[2] * 10));
         });
@@ -272,8 +275,15 @@ export default function LunarGlobe({ sites = [] }) {
     const longitude = (Number(site.longitude) * Math.PI) / 180;
     viewRef.current.pitch = latitude;
     viewRef.current.yaw = -longitude;
-    setSelectedId(site.site_id);
+    onSelect?.(site);
   };
+
+  useEffect(() => {
+    const site = sites.find((candidate) => candidate.site_id === selectedSiteId);
+    if (!site) return;
+    viewRef.current.pitch = (Number(site.latitude) * Math.PI) / 180;
+    viewRef.current.yaw = -(Number(site.longitude) * Math.PI) / 180;
+  }, [selectedSiteId, sites]);
 
   const onPointerDown = (event) => {
     dragRef.current = { x: event.clientX, y: event.clientY, pitch: viewRef.current.pitch, yaw: viewRef.current.yaw };
@@ -291,18 +301,13 @@ export default function LunarGlobe({ sites = [] }) {
     viewRef.current.pitch = -0.32;
     viewRef.current.yaw = 0.42;
     setZoomLevel(1.15);
-    setSelectedId("shackleton-rim");
   };
 
   return (
-    <section className="lunar-globe-panel" aria-labelledby="lunar-globe-title">
-      <div className="lunar-globe-heading">
-        <div><span className="section-kicker">Interactive lunar surface</span><h2 id="lunar-globe-title">Xoay để khám phá Mặt Trăng</h2><p>Kéo quả cầu bằng chuột hoặc chạm để xem các vùng khác; lăn chuột để phóng to.</p></div>
-        <span className="globe-live"><i /> 3D tương tác</span>
-      </div>
-
+    <section className="moon-view-card lunar-globe-view" aria-labelledby="lunar-globe-title">
+      <div className="moon-view-heading"><div><span className="section-kicker">3D · TOÀN CẦU</span><h3 id="lunar-globe-title">Bề mặt Mặt Trăng</h3></div><span className="globe-live"><i /> Xoay tương tác</span></div>
       <div className="lunar-globe-content">
-        <div ref={stageRef} className="lunar-globe-stage">
+        <div ref={stageRef} className="lunar-globe-stage" aria-label="Kéo để xoay Mặt Trăng, lăn chuột để phóng to">
           <div className="globe-stars" aria-hidden="true" />
           <canvas
             ref={canvasRef}
@@ -313,15 +318,15 @@ export default function LunarGlobe({ sites = [] }) {
             onPointerUp={() => { dragRef.current = null; }}
             onPointerCancel={() => { dragRef.current = null; }}
           />
-          <div className="globe-marker-layer" aria-label="Địa điểm trên bề mặt Mặt Trăng">
+          {showMarkers && <div className="globe-marker-layer" role="group" aria-label="Địa điểm trên bề mặt Mặt Trăng">
             {sites.map((site) => (
               <button
                 key={site.site_id}
                 ref={(element) => { markerRefs.current[site.site_id] = element; }}
                 type="button"
-                className={`globe-location-marker site-${site.site_id} ${Number(site.longitude) < 0 ? "label-west" : "label-east"} ${selectedId === site.site_id ? "selected" : ""}`}
+                className={`globe-location-marker site-${site.site_id} ${Number(site.longitude) < 0 ? "label-west" : "label-east"} ${selectedSiteId === site.site_id ? "selected" : ""}`}
                 aria-label={`Xoay tới ${site.name}, ${Math.abs(Number(site.latitude)).toFixed(3)} độ ${Number(site.latitude) < 0 ? "Nam" : "Bắc"}, ${Math.abs(Number(site.longitude)).toFixed(3)} độ ${Number(site.longitude) < 0 ? "Tây" : "Đông"}`}
-                aria-pressed={selectedId === site.site_id}
+                aria-pressed={selectedSiteId === site.site_id}
                 title={`${site.name} · ${Math.abs(Number(site.latitude)).toFixed(3)}°${Number(site.latitude) < 0 ? "S" : "N"}, ${Math.abs(Number(site.longitude)).toFixed(3)}°${Number(site.longitude) < 0 ? "W" : "E"}`}
                 onClick={() => focusOn(site)}
               >
@@ -329,7 +334,7 @@ export default function LunarGlobe({ sites = [] }) {
                 <span className="globe-location-label">{site.name}</span>
               </button>
             ))}
-          </div>
+          </div>}
           <div className="globe-controls" role="group" aria-label="Điều khiển quả cầu">
             <button type="button" aria-label="Phóng to Mặt Trăng" onClick={() => setZoomLevel(zoom + 0.15)} disabled={zoom >= 2.4}><Plus size={16} /></button>
             <button type="button" aria-label="Thu nhỏ Mặt Trăng" onClick={() => setZoomLevel(zoom - 0.15)} disabled={zoom <= 0.85}><Minus size={16} /></button>
@@ -339,21 +344,10 @@ export default function LunarGlobe({ sites = [] }) {
           {error && <div className="globe-error" role="status">{error}</div>}
         </div>
 
-        <aside className="globe-site-panel">
-          <span className="section-kicker">Đi nhanh tới địa điểm</span>
-          <div className="globe-site-list">
-            {sites.map((site) => (
-              <button key={site.site_id} type="button" className={selectedId === site.site_id ? "active" : ""} onClick={() => focusOn(site)} aria-pressed={selectedId === site.site_id}>
-                <span><strong>{site.name}</strong><small>{site.reference ?? site.kind}</small></span>
-                <Compass size={14} aria-hidden="true" />
-              </button>
-            ))}
-          </div>
-          {selectedSite && <div className="globe-selected-site" aria-live="polite"><span>Đang nhìn tới</span><strong>{selectedSite.name}</strong><small>{Math.abs(Number(selectedSite.latitude)).toFixed(3)}°{Number(selectedSite.latitude) < 0 ? "S" : "N"} · {Math.abs(Number(selectedSite.longitude)).toFixed(3)}°{Number(selectedSite.longitude) < 0 ? "W" : "E"}</small></div>}
-          <p className="globe-data-note">Bề mặt dùng ảnh equirectangular đi kèm dự án. Hướng xoay minh họa địa cầu; đây chưa phải mô hình địa hình hoặc hệ tọa độ đo đạc để dẫn đường.</p>
-        </aside>
       </div>
-      <div className="lunar-globe-footer"><span>Chuột: kéo để xoay · con lăn để zoom</span><span>Điểm chọn sẽ xoay về phía người xem</span></div>
+      <div className="lunar-globe-footer">Kéo để xoay · lăn chuột để zoom · bấm marker để chọn địa điểm</div>
+      <p className="globe-data-note">Bề mặt dùng ảnh equirectangular đi kèm dự án; đây là mô hình địa cầu minh họa, chưa có địa hình 3D đo đạc.</p>
     </section>
   );
 }
+

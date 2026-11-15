@@ -9,8 +9,7 @@ import BasinMap from "./BasinMap";
 import TraverseProfile from "./TraverseProfile";
 import { candidates, lunarSites, metricLabels, modes, target } from "./data";
 import { evaluateCandidate } from "./scoring";
-import MoonSouthPoleMap from "./MoonSouthPoleMap";
-import LunarGlobe from "./LunarGlobe";
+import MoonExplorer from "./MoonExplorer";
 import "./SpaApp.css";
 
 const formatScore = (score) => `${score}%`;
@@ -152,9 +151,8 @@ export default function SpaApp() {
             <button className="mars-button" onClick={() => setMarsOpen(true)}><span>Mars cross-compatible</span> Jezero Crater <ArrowUpRight size={16} /></button>
           </div>
           <div id="mission"><TargetCard /></div>
-          <div className="section-title lunar-section-title" id="lunar-sites"><div><span className="section-kicker">Mission context / Moon</span><h2>Các địa điểm vùng cực Nam</h2></div><p>Bản đồ chiếu cực giúp định vị các điểm tham chiếu Mặt Trăng.</p></div>
-          <MoonSouthPoleMap sites={lunarSites} selectedSiteId={selectedLunarSiteId} onSelect={(site) => setSelectedLunarSiteId(site.site_id)} />
-          <LunarGlobe sites={lunarSites} />
+          <div className="section-title lunar-section-title" id="lunar-sites"><div><span className="section-kicker">Mission context / Moon</span><h2>Khám phá Mặt Trăng</h2></div><p>Xoay quả cầu 3D để xem toàn cầu và các điểm tham chiếu vùng cực Nam.</p></div>
+          <MoonExplorer sites={lunarSites} selectedSiteId={selectedLunarSiteId} onSelect={(site) => setSelectedLunarSiteId(site.site_id)} />
           <div className="section-title" id="analysis"><div><span className="section-kicker">01 / LTV configuration</span><h2>Chế độ vận hành</h2></div><p>Trọng số và tiêu chí trọng yếu thay đổi theo bài thử nghiệm.</p></div>
           <div className="mode-grid" role="group" aria-label="Chế độ vận hành LTV">
             {Object.entries(modes).map(([key, mode]) => (
@@ -184,3 +182,4 @@ export default function SpaApp() {
     </div>
   );
 }
+

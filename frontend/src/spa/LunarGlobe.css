@@ -46,3 +46,4 @@
 .globe-location-marker:focus-visible { outline: 2px solid #fff0b5; outline-offset: 3px; }
 @media (max-width:1000px) { .lunar-globe-content { grid-template-columns: 1fr; } .globe-site-list { grid-template-columns: repeat(2,minmax(0,1fr)); } .lunar-globe-stage { min-height: 330px; } .lunar-globe-canvas,.globe-marker-layer { height: min(350px,80vw); min-height: 300px; } }
 @media (max-width:480px) { .lunar-globe-panel { padding: 13px; } .lunar-globe-heading { display: block; } .globe-live { margin-top: 9px; } .globe-site-list { grid-template-columns: 1fr; } .lunar-globe-stage { min-height: 285px; } .lunar-globe-canvas,.globe-marker-layer { height: 275px; min-height: 275px; } }
+
