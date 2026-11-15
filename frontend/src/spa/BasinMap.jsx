@@ -20,8 +20,8 @@ function MapControls({ candidates, selected }) {
 
   return (
     <div className="map-controls">
-      <button type="button" onClick={() => map.fitBounds(candidates.map(({ lat, lon }) => [lat, lon]), { padding: [32, 32], maxZoom: 3 })}>Tất cả vùng</button>
-      {selected && <button type="button" onClick={() => map.flyTo([selected.lat, selected.lon], 6)}>Phóng tới ô</button>}
+      <button type="button" onClick={() => map.fitBounds(candidates.map(({ lat, lon }) => [lat, lon]), { padding: [32, 32], maxZoom: 3 })}>All regions</button>
+      {selected && <button type="button" onClick={() => map.flyTo([selected.lat, selected.lon], 6)}>Zoom to cell</button>}
     </div>
   );
 }
@@ -82,3 +82,4 @@ export default function BasinMap({ ranked, selected, onSelect }) {
     </div>
   );
 }
+
