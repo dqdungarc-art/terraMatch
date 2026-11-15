@@ -46,12 +46,48 @@ export const metricLabels = {
 };
 
 export const lunarSites = [
-  { site_id: "shackleton-rim", name: "Shackleton Rim", latitude: -89.9, longitude: 129.9, data_status: "SAMPLE" },
-  { site_id: "malapert-massif", name: "Malapert Massif", latitude: -85.4, longitude: 0, data_status: "SAMPLE" },
-  { site_id: "cabeus-crater", name: "Cabeus Crater", latitude: -84.9, longitude: -42.3, data_status: "SAMPLE" },
-  { site_id: "amundsen-crater", name: "Amundsen Crater", latitude: -84.6, longitude: 82.8, data_status: "SAMPLE" },
-  { site_id: "apollo-11", name: "Apollo 11", latitude: 0.674, longitude: 23.473, data_status: "SAMPLE" },
-  { site_id: "luna-17", name: "Luna 17", latitude: 38.247, longitude: -35, data_status: "SAMPLE" },
+  {
+    site_id: "shackleton-rim", name: "Shackleton Rim", reference: "NASA Site 04",
+    latitude: -89.7668, longitude: -171.87, category: "south-pole", kind: "Vành miệng hố / điểm tham chiếu",
+    summary: "Điểm tham chiếu Shackleton Rim được liệt kê trong Lunar Surface Data Book.",
+    source: "NASA Lunar Surface Data Book, Table A2-2 (2023)", sourceUrl: "https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf",
+    sourceNote: "Tọa độ của Site04; bảng ghi độ chính xác tâm polygon gốc khoảng 5–10 m.", data_status: "NASA SOURCE",
+  },
+  {
+    site_id: "malapert-massif", name: "Malapert Massif", reference: "NASA Site 23",
+    latitude: -85.9948, longitude: -0.23578, category: "south-pole", kind: "Khối núi / điểm tham chiếu",
+    summary: "Điểm Site23 trên Malapert Massif, vùng địa hình cao gần cực Nam.",
+    source: "NASA Lunar Surface Data Book, Table A2-2 (2023)", sourceUrl: "https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf",
+    sourceNote: "Tọa độ điểm Site23; bảng ghi độ chính xác tâm polygon gốc khoảng 5–10 m.", data_status: "NASA SOURCE",
+  },
+  {
+    site_id: "cabeus-crater", name: "Cabeus Crater", reference: "LCROSS impact target (approx.)",
+    latitude: -84.9, longitude: -35.5, category: "south-pole", kind: "Miệng hố / mục tiêu LCROSS",
+    summary: "Miệng hố gần cực Nam được chọn làm mục tiêu va chạm LCROSS để khảo sát vật chất bay hơi.",
+    source: "NASA NTRS, LCROSS target description", sourceUrl: "https://ntrs.nasa.gov/citations/20250003292",
+    sourceNote: "Tọa độ xấp xỉ tâm mục tiêu LCROSS; không phải ranh giới của toàn miệng hố.", data_status: "NASA SOURCE",
+  },
+  {
+    site_id: "amundsen-crater", name: "Amundsen Crater", reference: "NASA Amundsen 1",
+    latitude: -83.9046, longitude: 89.53545, category: "south-pole", kind: "Miệng hố / điểm tham chiếu",
+    summary: "Điểm địa danh Amundsen 1 được ghi trong danh mục đặc trưng vùng cực Nam của NASA.",
+    source: "NASA Lunar Surface Data Book, Table A2-2 (2023)", sourceUrl: "https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf",
+    sourceNote: "Sử dụng tọa độ Amundsen 1 trong danh mục, không đại diện toàn miệng hố.", data_status: "NASA SOURCE",
+  },
+  {
+    site_id: "apollo-11", name: "Apollo 11", reference: "Mare Tranquillitatis",
+    latitude: 0.67416, longitude: 23.47314, category: "heritage", kind: "Điểm hạ cánh lịch sử",
+    summary: "Vị trí tàu Eagle hạ cánh trong nhiệm vụ Apollo 11.",
+    source: "NASA NSSDC, Apollo Landing Site Coordinates", sourceUrl: "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
+    sourceNote: "Tọa độ điểm hạ cánh Apollo 11 theo bảng NSSDC.", data_status: "NASA SOURCE",
+  },
+  {
+    site_id: "luna-17", name: "Luna 17", reference: "Mare Imbrium",
+    latitude: 38.23764, longitude: -35.00163, category: "heritage", kind: "Điểm hạ cánh lịch sử",
+    summary: "Điểm hạ cánh của Luna 17 và xe tự hành Lunokhod 1.",
+    source: "NASA NSSDC, Table of Anthropogenic Impacts and Spacecraft on the Moon", sourceUrl: "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_artifact_impacts.html",
+    sourceNote: "NSSDC ghi 35.00163°W; component đổi về kinh độ Tây âm để thống nhất dữ liệu.", data_status: "NASA SOURCE",
+  },
 ];
 
 export const candidates = [
