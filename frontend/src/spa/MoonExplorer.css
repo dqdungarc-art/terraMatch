@@ -1,5 +1,5 @@
 .moon-explorer { display: grid; gap: 11px; padding: 12px; border: 1px solid #29434b; border-radius: 11px; background: #0d2027; }
-.polar-toolbar { display: grid; grid-template-columns: minmax(180px,1fr) auto auto auto; gap: 8px; align-items: center; }
+.polar-toolbar { display: grid; grid-template-columns: minmax(180px,1fr) auto auto auto auto; gap: 8px; align-items: center; }
 .polar-search { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 8px 10px; color: #82b4ab; border: 1px solid #31505a; border-radius: 7px; background: #0c1c23; }
 .polar-search input { width: 100%; min-width: 0; padding: 0; color: #e0eee9; border: 0; outline: 0; background: transparent; font: inherit; font-size: 11px; }
 .polar-search input::placeholder { color: #779198; }
@@ -10,6 +10,10 @@
 .explorer-marker-toggle { display: flex; align-items: center; gap: 5px; color: #9bb7b8; font-size: 9px; white-space: nowrap; }
 .explorer-marker-toggle input { accent-color: #69cdb4; }
 .explorer-count { color: #9fc5bb; font-size: 10px; white-space: nowrap; }
+.explorer-view-toggle { display: flex; gap: 4px; padding: 3px; border: 1px solid #304952; border-radius: 7px; background: #0c1c23; }
+.explorer-view-toggle button { display: inline-flex; align-items: center; gap: 5px; padding: 5px 7px; color: #94afb1; border: 0; border-radius: 5px; background: transparent; font-size: 9px; white-space: nowrap; }
+.explorer-view-toggle button:hover,.explorer-view-toggle button.active { color: #d5f3e9; background: #1b453d; }
+.explorer-view-toggle button:focus-visible { outline: 2px solid #98e3cf; outline-offset: 2px; }
 .moon-explorer-layout { display: grid; grid-template-columns: minmax(0,1.65fr) minmax(290px,.8fr); gap: 11px; align-items: start; }
 .moon-globe-column { display: grid; gap: 8px; min-width: 0; }
 .moon-view-card { display: flex; flex-direction: column; min-width: 0; padding: 12px; border: 1px solid #29434b; border-radius: 8px; background: #10232b; }
@@ -56,6 +60,13 @@
 .polar-layer-picker > p { margin: 0 0 7px; color: #93aeb1; font-size: 9px; line-height: 1.5; }
 .polar-layer-picker > a,.polar-source-link { display: inline-flex; align-items: center; gap: 4px; color: #85d9c0; font-size: 8px; text-decoration: none; }
 .polar-layer-picker > a:hover,.polar-source-link:hover { text-decoration: underline; }
+.layer-explanation { display: grid; gap: 6px; margin-top: 8px; padding: 8px; border: 1px solid #2c4950; border-radius: 6px; background: #0b1c23; }
+.layer-explanation-title { color: #bfe8da; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.layer-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.layer-facts span { display: grid; gap: 3px; padding: 5px; color: #a8c4c3; border: 1px solid #263f46; border-radius: 4px; background: #10252c; font-size: 8px; }
+.layer-facts strong { color: #7ed7bd; font-size: 7px; text-transform: uppercase; }
+.layer-explanation > p { margin: 0; color: #c0d3cf; font-size: 9px; line-height: 1.45; }
+.layer-explanation > small { color: #91a9ac; font-size: 8px; line-height: 1.45; }
 .layer-status { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; padding: 7px; color: #a9c2c3; border: 1px solid #4d4a38; border-radius: 7px; background: #27291f; font-size: 8px; line-height: 1.45; }
 .layer-status svg { flex: 0 0 auto; color: #e3c578; }
 .layer-status strong { color: #f0d58b; }
@@ -64,6 +75,13 @@
 .polar-coordinates { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 6px; }
 .polar-coordinates span { padding: 4px 5px; color: #c4e4d9; border: 1px solid #2d4b4d; border-radius: 5px; background: #10242a; font-size: 8px; }
 .polar-site-summary { margin: 0 0 7px; color: #c0d1ce; font-size: 9px; line-height: 1.5; }
+.selected-terrain-profile { display: grid; gap: 6px; margin: 8px 0; padding: 8px; border: 1px solid #31514e; border-radius: 6px; background: #0b1e24; }
+.selected-terrain-heading { color: #bfe8da; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.terrain-profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.terrain-profile-grid > div { display: grid; align-content: start; gap: 3px; padding: 6px; border: 1px solid #263f46; border-radius: 4px; background: #10252c; }
+.terrain-profile-grid strong { color: #7ed7bd; font-size: 7px; letter-spacing: .03em; text-transform: uppercase; }
+.terrain-profile-grid span { color: #b5cbc8; font-size: 8px; line-height: 1.4; }
+.selected-terrain-profile > small { color: #91a9ac; font-size: 8px; line-height: 1.45; }
 .polar-source-note { display: block; margin-bottom: 7px; color: #819ba1; font-size: 8px; line-height: 1.45; }
 .polar-source-link { padding-top: 7px; border-top: 1px solid #29454b; }
 .explorer-site-list .polar-card-heading { margin-bottom: 7px; color: #94b2b1; font-size: 9px; }
@@ -77,6 +95,6 @@
 .explorer-site-grid button:focus-visible,.globe-controls button:focus-visible,.globe-location-marker:focus-visible { outline: 2px solid #98e3cf; outline-offset: 2px; }
 .polar-data-note { margin: 0; padding: 7px 2px 0; color: #819da4; font-size: 8px; line-height: 1.5; }
 @media (max-width:1150px) { .moon-explorer-layout { grid-template-columns: 1fr; } .lunar-globe-stage { min-height: 340px; aspect-ratio: 1.7; } .explorer-site-grid { grid-template-columns: repeat(3,minmax(0,1fr)); max-height: none; } }
-@media (max-width:720px) { .moon-explorer .polar-toolbar { grid-template-columns: 1fr auto; } .moon-explorer .polar-search { grid-column: 1 / -1; } .polar-filters { grid-column: 1 / -1; } .lunar-globe-stage { min-height: 285px; aspect-ratio: 1.2; } .explorer-site-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width:720px) { .moon-explorer .polar-toolbar { grid-template-columns: 1fr auto; } .moon-explorer .polar-search { grid-column: 1 / -1; } .polar-filters { grid-column: 1 / -1; } .explorer-view-toggle { grid-column: 1 / -1; justify-self: start; } .lunar-globe-stage { min-height: 285px; aspect-ratio: 1.2; } .explorer-site-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width:480px) { .moon-explorer { padding: 8px; } .moon-explorer .polar-toolbar { grid-template-columns: 1fr; } .explorer-marker-toggle,.explorer-count { justify-self: start; } .lunar-globe-stage { min-height: 260px; aspect-ratio: 1; } }
 

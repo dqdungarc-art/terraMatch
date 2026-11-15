@@ -20,8 +20,8 @@ function MapControls({ candidates, selected }) {
 
   return (
     <div className="map-controls">
-      <button type="button" onClick={() => map.fitBounds(candidates.map(({ lat, lon }) => [lat, lon]), { padding: [32, 32], maxZoom: 3 })}>All regions</button>
-      {selected && <button type="button" onClick={() => map.flyTo([selected.lat, selected.lon], 6)}>Zoom to cell</button>}
+      <button type="button" onClick={() => map.fitBounds(candidates.map(({ lat, lon }) => [lat, lon]), { padding: [32, 32], maxZoom: 3 })}>Xem tất cả khu vực</button>
+      {selected && <button type="button" onClick={() => map.flyTo([selected.lat, selected.lon], 6)}>Phóng đến ô đang chọn</button>}
     </div>
   );
 }
@@ -78,7 +78,7 @@ export default function BasinMap({ ranked, selected, onSelect }) {
         <FollowSelection selected={selected} />
         <MapControls candidates={ranked} selected={selected} />
       </MapContainer>
-      <div className="map-attribution"><a href="https://www.naturalearthdata.com/" target="_blank" rel="noreferrer">Natural Earth</a> · H3 resolution 4</div>
+      <div className="map-attribution"><a href="https://www.naturalearthdata.com/" target="_blank" rel="noreferrer">Natural Earth</a> · H3 cấp 4</div>
     </div>
   );
 }

@@ -37,3 +37,4 @@ export function evaluateCandidate(candidate, modeKey) {
     breakdown: Object.fromEntries(Object.entries(values).map(([key, value]) => [key, Math.round(value * 100)])),
   };
 }
+
