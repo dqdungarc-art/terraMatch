@@ -7,8 +7,9 @@ import {
 } from "lucide-react";
 import BasinMap from "./BasinMap";
 import TraverseProfile from "./TraverseProfile";
-import { candidates, metricLabels, modes, target } from "./data";
+import { candidates, lunarSites, metricLabels, modes, target } from "./data";
 import { evaluateCandidate } from "./scoring";
+import MoonSouthPoleMap from "./MoonSouthPoleMap";
 import "./SpaApp.css";
 
 const formatScore = (score) => `${score}%`;
@@ -103,6 +104,7 @@ function TargetCard() {
 export default function SpaApp() {
   const [modeKey, setModeKey] = useState("CREWED_TRAVERSE");
   const [selectedId, setSelectedId] = useState(candidates[1].id);
+  const [selectedLunarSiteId, setSelectedLunarSiteId] = useState("shackleton-rim");
   const [activeSection, setActiveSection] = useState("overview");
   const [marsOpen, setMarsOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -121,6 +123,7 @@ export default function SpaApp() {
   const navigation = [
     { id: "overview", label: "Khám phá analog", icon: Globe2 },
     { id: "mission", label: "Mục tiêu SPA", icon: Moon },
+    { id: "lunar-sites", label: "Địa điểm cực Nam", icon: MapPin },
     { id: "candidates", label: "Ô lưới ứng viên", icon: Hexagon },
     { id: "analysis", label: "Phân tích LTV", icon: SlidersHorizontal },
     { id: "sources", label: "Nguồn dữ liệu", icon: Database },
@@ -148,6 +151,8 @@ export default function SpaApp() {
             <button className="mars-button" onClick={() => setMarsOpen(true)}><span>Mars cross-compatible</span> Jezero Crater <ArrowUpRight size={16} /></button>
           </div>
           <div id="mission"><TargetCard /></div>
+          <div className="section-title lunar-section-title" id="lunar-sites"><div><span className="section-kicker">Mission context / Moon</span><h2>Các địa điểm vùng cực Nam</h2></div><p>Bản đồ chiếu cực giúp định vị các điểm tham chiếu Mặt Trăng.</p></div>
+          <MoonSouthPoleMap sites={lunarSites} selectedSiteId={selectedLunarSiteId} onSelect={(site) => setSelectedLunarSiteId(site.site_id)} />
           <div className="section-title" id="analysis"><div><span className="section-kicker">01 / LTV configuration</span><h2>Chế độ vận hành</h2></div><p>Trọng số và tiêu chí trọng yếu thay đổi theo bài thử nghiệm.</p></div>
           <div className="mode-grid" role="group" aria-label="Chế độ vận hành LTV">
             {Object.entries(modes).map(([key, mode]) => (

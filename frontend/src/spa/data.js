@@ -45,6 +45,15 @@ export const metricLabels = {
   horizonOcclusion: "Che khuất chân trời",
 };
 
+export const lunarSites = [
+  { site_id: "shackleton-rim", name: "Shackleton Rim", latitude: -89.9, longitude: 129.9, data_status: "SAMPLE" },
+  { site_id: "malapert-massif", name: "Malapert Massif", latitude: -85.4, longitude: 0, data_status: "SAMPLE" },
+  { site_id: "cabeus-crater", name: "Cabeus Crater", latitude: -84.9, longitude: -42.3, data_status: "SAMPLE" },
+  { site_id: "amundsen-crater", name: "Amundsen Crater", latitude: -84.6, longitude: 82.8, data_status: "SAMPLE" },
+  { site_id: "apollo-11", name: "Apollo 11", latitude: 0.674, longitude: 23.473, data_status: "SAMPLE" },
+  { site_id: "luna-17", name: "Luna 17", latitude: 38.247, longitude: -35, data_status: "SAMPLE" },
+];
+
 export const candidates = [
   {
     id: "H3-SPA-01", name: "Haughton Impact Basin", place: "Devon Island, Canada",

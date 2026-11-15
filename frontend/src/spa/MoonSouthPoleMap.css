@@ -1,0 +1,29 @@
+.moon-south-pole { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(230px,.75fr); gap: 18px; align-items: center; padding: 18px; background: #10232c; border: 1px solid #29414b; border-radius: 11px; }
+.polar-map-container { min-width: 0; }
+.polar-circle { position: relative; width: min(100%, 440px); aspect-ratio: 1; margin: 0 auto; overflow: hidden; border: 1px solid #52716f; border-radius: 50%; background: radial-gradient(circle at 50% 50%, #172f37 0 23%, #153039 24% 46%, #132a33 47% 100%); box-shadow: inset 0 0 50px #07151a80, 0 0 0 7px #81d9c10a; }
+.lat-ring { position: absolute; top: 50%; left: 50%; border: 1px dashed #547a78a3; border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+.lat-ring span { position: absolute; top: 1px; left: 50%; transform: translate(-50%,-50%); padding: 2px 4px; color: #83a9a5; background: #132b32; font-size: 9px; white-space: nowrap; }
+.lat-ring.lat-80 { width: 42%; height: 42%; }
+.lat-ring.lat-85 { width: 21%; height: 21%; }
+.pole-label { position: absolute; z-index: 2; top: 50%; left: 50%; display: grid; place-items: center; width: 27px; height: 27px; transform: translate(-50%,-50%); border: 1px solid #82d6bf; border-radius: 50%; color: #b9f1dc; background: #20463e; font-size: 11px; font-weight: 750; }
+.lon-line { position: absolute; top: 8%; left: 50%; width: 1px; height: 84%; transform-origin: center; background: linear-gradient(transparent,#4a6d70 12%,#4a6d70 88%,transparent); opacity: .58; pointer-events: none; }
+.polar-marker { position: absolute; z-index: 3; display: grid; justify-items: center; gap: 3px; padding: 3px; transform: translate(-50%,-50%); border: 0; border-radius: 5px; color: #dbece6; background: #0b1a21bf; white-space: nowrap; }
+.polar-marker:hover,.polar-marker.selected { z-index: 5; color: #f0d58b; background: #15282eea; }
+.marker-dot { width: 10px; height: 10px; border: 2px solid #0b1b22; border-radius: 50%; background: #78dbc2; box-shadow: 0 0 0 1px #84d7c6,0 0 12px #72e3c4a3; }
+.polar-marker.selected .marker-dot { width: 13px; height: 13px; background: #f2c96f; box-shadow: 0 0 0 2px #fff2bd,0 0 16px #f2c96f; }
+.marker-label { max-width: 122px; overflow: hidden; text-overflow: ellipsis; padding: 2px 4px; border-radius: 3px; background: #0b1a21de; font-size: 9px; font-weight: 650; }
+.polar-legend { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 7px; margin: 11px auto 0; width: min(100%,440px); color: #a6c0bf; font-size: 10px; }
+.legend-note { color: #7c9ba2; }
+.polar-info { display: grid; gap: 18px; min-width: 0; }
+.polar-selected { padding: 15px; border: 1px solid #34544f; border-radius: 8px; background: #142d31; }
+.polar-selected h3 { display: flex; align-items: center; gap: 7px; margin: 8px 0 5px; color: #e8f4ef; font-size: 16px; }
+.polar-selected h3 svg { color: #8ce0c8; }
+.polar-selected p { margin: 0; color: #a9c4c1; font-size: 11px; }
+.polar-selected p span { padding: 0 3px; color: #688a8d; }
+.other-sites small { display: block; margin-bottom: 9px; color: #91adb1; font-size: 10px; }
+.other-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.other-chip { padding: 7px 9px; color: #b7cecb; border: 1px solid #35515a; border-radius: 99px; background: #132730; font-size: 10px; }
+.other-chip:hover,.other-chip.active { border-color: #69cdb4; color: #c5f2e3; background: #183a36; }
+.polar-data-note { margin: 0; padding-top: 12px; border-top: 1px solid #29434a; color: #819da4; font-size: 10px; line-height: 1.55; }
+@media (max-width:760px) { .moon-south-pole { grid-template-columns: 1fr; padding: 13px; } .polar-circle { width: min(100%,380px); } .polar-info { grid-template-columns: 1fr 1fr; gap: 12px; } .polar-data-note { grid-column: 1 / -1; } }
+@media (max-width:480px) { .polar-info { grid-template-columns: 1fr; } .polar-data-note { grid-column: auto; } .marker-label { max-width: 96px; font-size: 8px; } }
