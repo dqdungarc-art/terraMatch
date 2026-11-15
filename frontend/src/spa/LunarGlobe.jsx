@@ -52,7 +52,7 @@ function compileShader(gl, type, source) {
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     const message = gl.getShaderInfoLog(shader);
     gl.deleteShader(shader);
-    throw new Error(message || "Không thể biên dịch đổ bóng WebGL.");
+    throw new Error(message || "Could not compile the WebGL shader.");
   }
   return shader;
 }
@@ -67,7 +67,7 @@ function createProgram(gl) {
   gl.deleteShader(vertex);
   gl.deleteShader(fragment);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    throw new Error(gl.getProgramInfoLog(program) || "Không thể liên kết chương trình WebGL.");
+    throw new Error(gl.getProgramInfoLog(program) || "Could not link the WebGL program.");
   }
   return program;
 }
@@ -129,7 +129,7 @@ export default function LunarGlobe({ sites = [], selectedSiteId, onSelect, showM
     const canvas = canvasRef.current;
     const gl = canvas?.getContext("webgl", { alpha: true, antialias: true });
     if (!gl) {
-      setError("WebGL không khả dụng. Hãy bật tăng tốc phần cứng hoặc thử trình duyệt khác.");
+      setError("WebGL is unavailable. Enable hardware acceleration or try another browser.");
       return undefined;
     }
 
@@ -168,7 +168,7 @@ export default function LunarGlobe({ sites = [], selectedSiteId, onSelect, showM
         gl.generateMipmap(gl.TEXTURE_2D);
         textureReady = true;
       };
-      image.onerror = () => { if (!disposed) setError("Không thể tải ảnh bề mặt Mặt Trăng từ thư mục media."); };
+      image.onerror = () => { if (!disposed) setError("Could not load the lunar surface texture from the media folder."); };
       image.src = "/media/lunar-map.jpg";
 
       resources = {
@@ -247,7 +247,7 @@ export default function LunarGlobe({ sites = [], selectedSiteId, onSelect, showM
       };
       render();
     } catch (initializationError) {
-      setError(initializationError.message || "Không thể khởi tạo khối cầu 3D.");
+      setError(initializationError.message || "Could not initialize the 3D globe.");
     }
 
     return () => {
@@ -305,9 +305,9 @@ export default function LunarGlobe({ sites = [], selectedSiteId, onSelect, showM
 
   return (
     <section className="moon-view-card lunar-globe-view" aria-labelledby="lunar-globe-title">
-      <div className="moon-view-heading"><div><span className="section-kicker">3D · TOÀN CẦU</span><h3 id="lunar-globe-title">Bề mặt Mặt Trăng</h3></div><span className="globe-live"><i /> Có thể xoay tương tác</span></div>
+      <div className="moon-view-heading"><div><span className="section-kicker">3D · GLOBAL</span><h3 id="lunar-globe-title">Lunar surface</h3></div><span className="globe-live"><i /> Interactive rotation</span></div>
       <div className="lunar-globe-content">
-        <div ref={stageRef} className="lunar-globe-stage" aria-label="Kéo chuột để xoay Mặt Trăng; cuộn chuột để thu phóng">
+        <div ref={stageRef} className="lunar-globe-stage" aria-label="Drag to rotate the Moon; scroll to zoom">
           <div className="globe-stars" aria-hidden="true" />
           <canvas
             ref={canvasRef}
@@ -318,14 +318,14 @@ export default function LunarGlobe({ sites = [], selectedSiteId, onSelect, showM
             onPointerUp={() => { dragRef.current = null; }}
             onPointerCancel={() => { dragRef.current = null; }}
           />
-          {showMarkers && <div className="globe-marker-layer" role="group" aria-label="Các địa điểm trên bề mặt Mặt Trăng">
+          {showMarkers && <div className="globe-marker-layer" role="group" aria-label="Locations on the lunar surface">
             {sites.map((site) => (
               <button
                 key={site.site_id}
                 ref={(element) => { markerRefs.current[site.site_id] = element; }}
                 type="button"
                 className={`globe-location-marker site-${site.site_id} ${Number(site.longitude) < 0 ? "label-west" : "label-east"} ${selectedSiteId === site.site_id ? "selected" : ""}`}
-                aria-label={`Xoay đến ${site.name}, ${Math.abs(Number(site.latitude)).toFixed(3)} độ ${Number(site.latitude) < 0 ? "Nam" : "Bắc"}, ${Math.abs(Number(site.longitude)).toFixed(3)} độ ${Number(site.longitude) < 0 ? "Tây" : "Đông"}`}
+                aria-label={`Rotate to ${site.name}, ${Math.abs(Number(site.latitude)).toFixed(3)} degrees ${Number(site.latitude) < 0 ? "south" : "north"}, ${Math.abs(Number(site.longitude)).toFixed(3)} degrees ${Number(site.longitude) < 0 ? "west" : "east"}`}
                 aria-pressed={selectedSiteId === site.site_id}
                 title={`${site.name} · ${Math.abs(Number(site.latitude)).toFixed(3)}°${Number(site.latitude) < 0 ? "S" : "N"}, ${Math.abs(Number(site.longitude)).toFixed(3)}°${Number(site.longitude) < 0 ? "W" : "E"}`}
                 onClick={() => focusOn(site)}
@@ -335,19 +335,18 @@ export default function LunarGlobe({ sites = [], selectedSiteId, onSelect, showM
               </button>
             ))}
           </div>}
-          <div className="globe-controls" role="group" aria-label="Điều khiển khối cầu">
-            <button type="button" aria-label="Phóng to Mặt Trăng" onClick={() => setZoomLevel(zoom + 0.15)} disabled={zoom >= 2.4}><Plus size={16} /></button>
-            <button type="button" aria-label="Thu nhỏ Mặt Trăng" onClick={() => setZoomLevel(zoom - 0.15)} disabled={zoom <= 0.85}><Minus size={16} /></button>
-            <button type="button" aria-label="Đặt lại góc nhìn" onClick={resetView}><RotateCcw size={14} /></button>
+          <div className="globe-controls" role="group" aria-label="Globe controls">
+            <button type="button" aria-label="Zoom in on the Moon" onClick={() => setZoomLevel(zoom + 0.15)} disabled={zoom >= 2.4}><Plus size={16} /></button>
+            <button type="button" aria-label="Zoom out from the Moon" onClick={() => setZoomLevel(zoom - 0.15)} disabled={zoom <= 0.85}><Minus size={16} /></button>
+            <button type="button" aria-label="Reset view" onClick={resetView}><RotateCcw size={14} /></button>
           </div>
           <span className="globe-zoom-readout">{Math.round(zoom * 100)}%</span>
           {error && <div className="globe-error" role="status">{error}</div>}
         </div>
 
       </div>
-      <div className="lunar-globe-footer">Kéo để xoay · cuộn để thu phóng · chọn điểm đánh dấu để xem địa điểm</div>
-      <p className="globe-data-note">Khối cầu sử dụng ảnh bề mặt theo phép chiếu hình trụ đều của dự án. Đây là mô hình trực quan, không phải bộ dữ liệu địa hình 3D đã đo đạc.</p>
+      <div className="lunar-globe-footer">Drag to rotate · scroll to zoom · select a marker to view a location</div>
+      <p className="globe-data-note">The globe uses the project's equirectangular surface texture. It is a visual model, not a measured 3D terrain dataset.</p>
     </section>
   );
 }
-
