@@ -14,6 +14,18 @@ import "./SpaApp.css";
 
 const formatScore = (score) => `${score}%`;
 
+const dataSources = [
+  { name: "NASA Moon Trek · LRO LOLA & WAC", description: "Các ô bản đồ địa hình, độ dốc, chiếu sáng và ảnh ghép vùng cực Nam được tải trực tiếp khi mở bản đồ Mặt Trăng.", url: "https://trek.nasa.gov/tiles/Moon/SP/LRO_LOLA_ClrShade_SPole75_30mp_v04/1.0.0/WMTSCapabilities.xml", category: "Bản đồ Mặt Trăng" },
+  { name: "NASA PDS · LRO LOLA LDEM_16", description: "Mô hình cao độ dùng để tính cao độ tương đối, độ dốc, độ gồ ghề và chênh cao cục bộ tại các điểm tham chiếu.", url: "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_16.img", category: "Số liệu địa hình Mặt Trăng" },
+  { name: "NASA NTRS & NSSDC · tọa độ địa điểm", description: "Tọa độ các điểm tham chiếu, vị trí Apollo 11 và Luna 17 trong danh mục địa điểm của ứng dụng.", url: "https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf", category: "Danh mục địa điểm" },
+  { name: "Natural Earth · land polygons", description: "Lớp ranh giới đất liền hiển thị làm bản đồ nền cho các khu vực tương đồng trên Trái Đất.", url: "https://www.naturalearthdata.com/", category: "Bản đồ Trái Đất" },
+  { name: "Open-Meteo · Copernicus DEM GLO-90", description: "API cao độ được gọi theo yêu cầu để tạo trắc dọc 10 km cho khu vực ứng viên đang chọn.", url: "https://open-meteo.com/en/docs/elevation-api", category: "Địa hình Trái Đất" },
+  { name: "NASA EOSDIS / LP DAAC · SRTMGL1.003", description: "Nguồn địa hình SRTM mà pipeline dữ liệu phía máy chủ dùng để lập chỉ mục các địa điểm tương tự trên Trái Đất.", url: "https://www.earthdata.nasa.gov/data/instruments/srtm", category: "Pipeline dữ liệu cục bộ" },
+  { name: "NASA POWER · Daily API", description: "Nguồn quan trắc nhiệt độ không khí và bức xạ Mặt Trời cho quy trình làm giàu dữ liệu Trái Đất khi được bật.", url: "https://power.larc.nasa.gov/", category: "Pipeline dữ liệu cục bộ" },
+  { name: "NASA AppEEARS · MODIS", description: "Nguồn nhiệt độ bề mặt đất MODIS mà quy trình lấy dữ liệu Trái Đất có thể truy vấn.", url: "https://appeears.earthdatacloud.nasa.gov/", category: "Pipeline dữ liệu cục bộ" },
+  { name: "NASA PDS · LRO Diviner PRP", description: "Sản phẩm nhiệt độ vùng cực Nam dùng trong bộ nạp dữ liệu Mặt Trăng phía máy chủ.", url: "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/", category: "Pipeline dữ liệu cục bộ" },
+];
+
 function MetricBars({ result }) {
   const metrics = [
     ["slope", `${result.slopeDeg}°`],
@@ -172,9 +184,17 @@ export default function SpaApp() {
             <SiteDetail site={selected} modeKey={modeKey} />
             <div className="analysis-side"><TraverseProfile site={selected} />
               {dualSite && <section className="panel pairing-panel"><span className="section-kicker">Dual-site testing</span><h2>Complementary site pair</h2><p>Top score is below 85%. Pair two sites to separate mechanical and optical test objectives.</p><div><span>Mechanical</span><strong>{dualSite.mechanics.name}</strong></div><div><span>Optical</span><strong>{dualSite.optics.name}</strong></div></section>}
-              <section className="panel method-panel" id="sources"><span className="section-kicker">Method / G‑GD</span><h2>Scoring method</h2><p>Gaussian scores are calculated per criterion, then adjusted by critical-criterion penalties and a safety factor when slope exceeds 20°. The sample includes NDVI for vegetation filtering. Land-cover data for filtering water and urban areas is not yet available.</p><a href="https://h3geo.org/docs/" target="_blank" rel="noreferrer">H3 documentation <ArrowRight size={15} /></a><a href="https://open-meteo.com/en/docs/elevation-api" target="_blank" rel="noreferrer">Copernicus DEM via Open-Meteo <ArrowRight size={15} /></a></section>
+              <section className="panel method-panel"><span className="section-kicker">Method / G‑GD</span><h2>Scoring method</h2><p>Gaussian scores are calculated per criterion, then adjusted by critical-criterion penalties and a safety factor when slope exceeds 20°. The sample includes NDVI for vegetation filtering. Land-cover data for filtering water and urban areas is not yet available.</p><a href="https://h3geo.org/docs/" target="_blank" rel="noreferrer">H3 documentation <ArrowRight size={15} /></a></section>
             </div>
           </div>
+          <section className="panel data-sources-panel" id="sources" aria-labelledby="data-sources-title">
+            <div className="data-sources-heading"><div><span className="section-kicker">Traceability</span><h2 id="data-sources-title">Data sources</h2></div><p>Liên kết trực tiếp đến mọi nguồn dữ liệu và dịch vụ dữ liệu mà dự án sử dụng.</p></div>
+            <div className="data-sources-list">
+              {dataSources.map(({ name, description, url, category }) => (
+                <article className="data-source-card" key={name}><span>{category}</span><h3>{name}</h3><p>{description}</p><a href={url} target="_blank" rel="noreferrer">Mở nguồn <ArrowUpRight size={14} /></a></article>
+              ))}
+            </div>
+          </section>
           <footer className="spa-footer"><span>ACS.AEROTECH · Technical prototype</span><span>Candidate locations and simulated metrics are based on the team's design document.</span></footer>
         </div>
       </main>
