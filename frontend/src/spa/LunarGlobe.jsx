@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Compass, Minus, Plus, RotateCcw } from "lucide-react";
+import { Compass, MapPin, Minus, Plus, RotateCcw } from "lucide-react";
 import "./LunarGlobe.css";
 
 const VERTEX_SHADER = `
@@ -100,6 +100,10 @@ function createSphere(latitudes = 64, longitudes = 96) {
 
 export default function LunarGlobe({ sites = [] }) {
   const canvasRef = useRef(null);
+  const stageRef = useRef(null);
+  const markerRefs = useRef({});
+  const sitesRef = useRef(sites);
+  sitesRef.current = sites;
   const viewRef = useRef({ pitch: -0.32, yaw: 0.42, zoom: 1.15 });
   const dragRef = useRef(null);
   const [selectedId, setSelectedId] = useState("shackleton-rim");
@@ -107,6 +111,20 @@ export default function LunarGlobe({ sites = [] }) {
   const [error, setError] = useState("");
 
   const selectedSite = useMemo(() => sites.find((site) => site.site_id === selectedId) ?? sites[0], [sites, selectedId]);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return undefined;
+    const handleWheel = (event) => {
+      event.preventDefault();
+      const factor = event.deltaY > 0 ? 0.92 : 1.08;
+      const nextZoom = Math.max(0.85, Math.min(2.4, viewRef.current.zoom * factor));
+      viewRef.current.zoom = nextZoom;
+      setZoom(nextZoom);
+    };
+    stage.addEventListener("wheel", handleWheel, { passive: false });
+    return () => stage.removeEventListener("wheel", handleWheel);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -195,6 +213,33 @@ export default function LunarGlobe({ sites = [] }) {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, resources.texture);
         gl.drawElements(gl.TRIANGLES, resources.indexCount, gl.UNSIGNED_SHORT, 0);
+
+        sitesRef.current.forEach((site, index) => {
+          const marker = markerRefs.current[site.site_id];
+          if (!marker) return;
+          const latitude = (Number(site.latitude) * Math.PI) / 180;
+          const longitude = (Number(site.longitude) * Math.PI) / 180;
+          const source = [Math.cos(latitude) * Math.sin(longitude), Math.sin(latitude), Math.cos(latitude) * Math.cos(longitude)];
+          const pitchCos = Math.cos(view.pitch);
+          const pitchSin = Math.sin(view.pitch);
+          const pitched = [source[0], pitchCos * source[1] - pitchSin * source[2], pitchSin * source[1] + pitchCos * source[2]];
+          const yawCos = Math.cos(view.yaw);
+          const yawSin = Math.sin(view.yaw);
+          const point = [yawCos * pitched[0] + yawSin * pitched[2], pitched[1], -yawSin * pitched[0] + yawCos * pitched[2]];
+          const visible = point[2] > 0.035;
+          marker.setAttribute("aria-hidden", visible ? "false" : "true");
+          marker.tabIndex = visible ? 0 : -1;
+          marker.style.visibility = visible ? "visible" : "hidden";
+          marker.style.pointerEvents = visible ? "auto" : "none";
+          if (!visible) return;
+          const perspective = 3.2 - point[2];
+          const normalizedX = (point[0] * view.zoom / (width / height)) / perspective;
+          const normalizedY = (point[1] * view.zoom) / perspective;
+          marker.style.left = `${(normalizedX + 1) * 50}%`;
+          marker.style.top = `${(1 - normalizedY) * 50}%`;
+          marker.style.opacity = `${Math.min(1, Math.max(0.35, point[2] * 2.8))}`;
+          marker.style.zIndex = String(5 + index + Math.round(point[2] * 10));
+        });
         animationFrame = window.requestAnimationFrame(render);
       };
       render();
@@ -242,11 +287,6 @@ export default function LunarGlobe({ sites = [] }) {
     viewRef.current.pitch = Math.max(-1.48, Math.min(1.48, pitch + (event.clientY - y) * 0.008));
   };
 
-  const onWheel = (event) => {
-    event.preventDefault();
-    setZoomLevel(viewRef.current.zoom * (event.deltaY > 0 ? 0.92 : 1.08));
-  };
-
   const resetView = () => {
     viewRef.current.pitch = -0.32;
     viewRef.current.yaw = 0.42;
@@ -262,7 +302,7 @@ export default function LunarGlobe({ sites = [] }) {
       </div>
 
       <div className="lunar-globe-content">
-        <div className="lunar-globe-stage">
+        <div ref={stageRef} className="lunar-globe-stage">
           <div className="globe-stars" aria-hidden="true" />
           <canvas
             ref={canvasRef}
@@ -272,8 +312,24 @@ export default function LunarGlobe({ sites = [] }) {
             onPointerMove={onPointerMove}
             onPointerUp={() => { dragRef.current = null; }}
             onPointerCancel={() => { dragRef.current = null; }}
-            onWheel={onWheel}
           />
+          <div className="globe-marker-layer" aria-label="Địa điểm trên bề mặt Mặt Trăng">
+            {sites.map((site) => (
+              <button
+                key={site.site_id}
+                ref={(element) => { markerRefs.current[site.site_id] = element; }}
+                type="button"
+                className={`globe-location-marker site-${site.site_id} ${Number(site.longitude) < 0 ? "label-west" : "label-east"} ${selectedId === site.site_id ? "selected" : ""}`}
+                aria-label={`Xoay tới ${site.name}, ${Math.abs(Number(site.latitude)).toFixed(3)} độ ${Number(site.latitude) < 0 ? "Nam" : "Bắc"}, ${Math.abs(Number(site.longitude)).toFixed(3)} độ ${Number(site.longitude) < 0 ? "Tây" : "Đông"}`}
+                aria-pressed={selectedId === site.site_id}
+                title={`${site.name} · ${Math.abs(Number(site.latitude)).toFixed(3)}°${Number(site.latitude) < 0 ? "S" : "N"}, ${Math.abs(Number(site.longitude)).toFixed(3)}°${Number(site.longitude) < 0 ? "W" : "E"}`}
+                onClick={() => focusOn(site)}
+              >
+                <span className="globe-location-pin"><MapPin size={15} aria-hidden="true" /></span>
+                <span className="globe-location-label">{site.name}</span>
+              </button>
+            ))}
+          </div>
           <div className="globe-controls" role="group" aria-label="Điều khiển quả cầu">
             <button type="button" aria-label="Phóng to Mặt Trăng" onClick={() => setZoomLevel(zoom + 0.15)} disabled={zoom >= 2.4}><Plus size={16} /></button>
             <button type="button" aria-label="Thu nhỏ Mặt Trăng" onClick={() => setZoomLevel(zoom - 0.15)} disabled={zoom <= 0.85}><Minus size={16} /></button>
